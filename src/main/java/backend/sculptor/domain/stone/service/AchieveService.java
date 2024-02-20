@@ -86,6 +86,16 @@ public class AchieveService {
                 .collect(Collectors.toList());
 
         Map<String, Long> achievementCounts = AchievementCounts(achieves);
+        // a, b, c 각 달성 현황에 대해 맵에 없으면 0으로 설정
+        if (!achievementCounts.containsKey("A")) {
+            achievementCounts.put("A", 0L);
+        }
+        if (!achievementCounts.containsKey("B")) {
+            achievementCounts.put("B", 0L);
+        }
+        if (!achievementCounts.containsKey("C")) {
+            achievementCounts.put("C", 0L);
+        }
 
         // Stone 정보와 AchieveDTO 리스트를 포함하는 StoneAchievesDTO 반환
         return new StoneAchievesListDTO(stoneId, achievementCounts, achieveDTOs);
