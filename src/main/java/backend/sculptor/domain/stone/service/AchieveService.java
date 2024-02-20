@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -71,9 +72,17 @@ public class AchieveService {
         Map<AchieveStatus, Long> counts = achieves.stream()
                 .collect(Collectors.groupingBy(Achieve::getAchieveStatus, Collectors.counting()));
 
+        Map<String, Long> result = new HashMap<>();
+        result.put("A", 0L);
+        result.put("B", 0L);
+        result.put("C", 0L);
+
+        counts.forEach((status, count) -> result.put(status.name(), count));
+
+        return result;
         // Map<AchieveStatus, Long>를 Map<String, Long>으로 변환
-        return counts.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue));
+//        return counts.entrySet().stream()
+//                .collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue));
     }
 
     //돌 달성현황 전체 조회
