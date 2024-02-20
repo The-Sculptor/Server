@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -71,9 +72,17 @@ public class AchieveService {
         Map<AchieveStatus, Long> counts = achieves.stream()
                 .collect(Collectors.groupingBy(Achieve::getAchieveStatus, Collectors.counting()));
 
+        Map<String, Long> result = new HashMap<>();
+        result.put("A", 0L);
+        result.put("B", 0L);
+        result.put("C", 0L);
+
+        counts.forEach((status, count) -> result.put(status.name(), count));
+
+        return result;
         // Map<AchieveStatus, Long>를 Map<String, Long>으로 변환
-        return counts.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue));
+//        return counts.entrySet().stream()
+//                .collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue));
     }
 
     //돌 달성현황 전체 조회
@@ -86,6 +95,16 @@ public class AchieveService {
                 .collect(Collectors.toList());
 
         Map<String, Long> achievementCounts = AchievementCounts(achieves);
+        // a, b, c 각 달성 현황에 대해 맵에 없으면 0으로 설정
+        if (!achievementCounts.containsKey("A")) {
+            achievementCounts.put("A", 0L);
+        }
+        if (!achievementCounts.containsKey("B")) {
+            achievementCounts.put("B", 0L);
+        }
+        if (!achievementCounts.containsKey("C")) {
+            achievementCounts.put("C", 0L);
+        }
 
         // Stone 정보와 AchieveDTO 리스트를 포함하는 StoneAchievesDTO 반환
         return new StoneAchievesListDTO(stoneId, achievementCounts, achieveDTOs);
